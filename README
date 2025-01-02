@@ -1,0 +1,125 @@
+# Arduino Solar VFD Controller
+
+A Variable Frequency Drive (VFD) controller for solar-powered water pumps or any other motor or resitive device, compatible with Arduino Uno. The system provides intelligent control of a single-phase motor with temperature monitoring, voltage protection, and status indication.
+
+## Features
+
+- Platform support (Arduino Uno)
+- Variable frequency control (default 10-60 Hz)
+- Temperature monitoring with automatic fan control
+- Voltage protection for solar panel input
+- LED status indicators
+- Potentiometer-based frequency control
+- Emergency shutdown protection
+
+## Hardware Requirements
+
+### Main Components
+- Arduino Uno 
+- Two MOSFETs for phase control
+- NTC thermistor (B3950 100k)
+- 12V DC Fan
+- Status LEDs (Red and Green)
+- Potentiometer (10k)
+- Relay module
+- Voltage divider for panel voltage sensing
+
+### Pin Connections
+
+#### Arduino Uno
+- PHASE_A: Pin 5 (PWM)
+- PHASE_B: Pin 6 (PWM)
+- VOLTAGE_SENSOR: A0
+- POTENTIOMETER: A1
+- NTC_THERMISTOR: A2
+- BUTTON: Pin 2
+- RELAY: Pin 3
+- FAN: Pin 9 (PWM)
+- LED_GREEN: Pin 10
+- LED_RED: Pin 11
+
+
+### Protection Circuit Connections
+```
+Arduino PWM Pin ----[100kΩ]---- Gate (MOSFET)
+                              Source ---- GND
+                              Drain ---| 
+12V ----[Transformer]---------| 
+       |                      |
+       |--[1N4007]-----------|
+          (cathode)    (anode)
+```
+
+### Temperature Sensor Connection
+```
+5V ----[NTC 100k]----+----[100k]---- GND
+                     |
+                     |
+                Arduino A2
+```
+
+### Voltage Sensor Divider Connection
+```
+12V ----[100k]----+----[50k]---- GND 
+                 |                
+            Arduino A0
+```
+
+### Software Setup
+
+1. Install PlatformIO in VS Code
+2. Clone this repository
+3. Configure platformio.ini for your board:
+
+```ini
+[env:uno]
+platform = atmelavr
+board = uno
+framework = arduino
+upload_speed = 115200
+monitor_speed = 115200
+lib_deps =
+    paulstoffregen/TimerOne @ ^1.1
+```
+
+## Operation
+
+### Normal Operation
+1. System starts with voltage monitoring
+2. Green LED indicates status:
+   - Slow blink: Standby
+   - Fast blink: Ready to start
+   - Solid: Running
+3. Red LED indicates warnings/errors:
+   - Solid: System disabled
+   - Fast blink: Error condition
+   - Off: Normal operation
+
+### Protection Features
+- Low voltage cutoff
+- High voltage protection
+- Temperature-based fan control
+- Over-temperature protection
+
+## Configuration
+
+Key parameters can be adjusted in config.h:
+- Frequency range: MIN_FREQ (10 Hz) to MAX_FREQ (60 Hz)
+- Temperature thresholds: TEMP_MIN, TEMP_MAX, TEMP_PANIC
+- Voltage thresholds: TURN_ON_VOLTAGE, TURN_OFF_VOLTAGE_HIGH, TURN_OFF_VOLTAGE_LOW
+- Timing parameters for voltage protection
+
+## License
+
+@MissingReplicators Copy of the License is whatever you want it to be.
+
+## Contributors
+
+- Sir FixALot 
+- AKA ElEkTrIkMoOnKeY
+
+## Acknowledgments
+
+Special thanks to AI My perssonal Turbo CodeX for code assistance and psicoligist support.
+Happy burnings ;) 
+
